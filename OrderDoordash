@@ -1,0 +1,216 @@
+import java.util.Scanner;
+import java.util.ArrayList;
+import java.time.LocalTime;
+
+public class OrderDoordash
+{
+    private ArrayList <TakeOut> totalOrders = new ArrayList<TakeOut>(); //creates an array list of total TakeOut items
+    private double[] prices; //array of all the item prices
+    private double totalcost; // cost of all items, not including shipping, tax, or discount
+    private boolean getsDiscount; //checks to see if they are eligible for discount
+    private double tax; // 10% of total order
+    private double shipping; // $7 shipping added to cost
+    private double finalcost; // orders + shipping + tax + discount
+    private String menu; // breakfast, lunch, or dinner
+    
+    public TakeOut makeOrder()
+    {
+        TakeOut order = new TakeOut(); //new takeout object
+        
+        System.out.println("Where would you like to order from?: "); //user input set to parameters of TakeOut class
+        Scanner input1 = new Scanner(System.in);
+        order.setRestaurant(input1.nextLine());
+        
+        System.out.println("Which menu? (breakfast, lunch, or dinner): ");
+        Scanner input2 = new Scanner(System.in);
+        String menuinput = input2.nextLine();
+        
+        if (menuinput.equals("breakfast") || menuinput.equals("lunch") || menuinput.equals("dinner")) 
+        {
+            order.setMeal(input2.nextLine());
+        }
+        else
+        {
+            throw new IllegalArgumentException("That's not a meal!!"); //throws error if input is none of the 3 listed
+        }
+        
+        System.out.println("What item?: "); 
+        Scanner input3 = new Scanner(System.in);
+        order.setVegOrItem(input3.nextLine());
+        
+        System.out.println("Vegetarian? (yes or no):  ");
+        Scanner input4 = new Scanner(System.in);
+        String veggie = input4.nextLine();
+        if (veggie.equals("yes")) //sets boolean Vegetarian to true if input is "yes"
+        {
+            order.makeItVeg();
+        }
+        
+        System.out.println("What size? (small, medium, or large?):  ");
+        Scanner input5 = new Scanner(System.in);
+        order.setSize(input5.nextLine());
+        
+        totalOrders.add(order); //adds item to array list of takeout objects
+        System.out.println("Order added.");
+        return order;// returns item that was just created
+    }
+  
+    public ArrayList allOrders()
+    {
+        return totalOrders; //returns entire array list of orders
+    }
+    
+    public boolean getDiscount()
+    {
+        getsDiscount = false; // initially sets to false
+        LocalTime time = LocalTime.now(); // using LocalTime class to check system time
+        for ( int i = 0; i < totalOrders.size(); i++) //goes through each takeout object in array list
+        {
+            // if the user inputs a breakfast item during breakfast hours (7-10), they get a discount
+            if (totalOrders.get(i).getMeal().equals("breakfast")) 
+            {
+                 if (time.getHour() >= 7 && time.getHour() <= 10)
+                 {
+                     getsDiscount = true;
+                 }
+            }
+            // if the user inputs a lunch item during lunch hours (10-1), they get a discount
+            else if (totalOrders.get(i).getMeal().equals("lunch"))
+            {
+                if (time.getHour() == 10 || time.getHour() == 11 || time.getHour() == 12 || time.getHour() == 1)
+                {
+                    getsDiscount = true;
+                }
+            }
+            // if the user inputs a dinner item during dinner hours (5-9), they get a discount
+            else if (totalOrders.get(i).getMeal().equals("dinner"))
+            {
+                 if (time.getHour() >= 5 && time.getHour() <= 9)
+                 {
+                     getsDiscount = true;
+                 }
+            }
+            else
+            {
+                getsDiscount = false; //if they enter items that aren't during the designated hours, they don't receive discount
+            }
+        }
+        
+        return getsDiscount;
+    }
+  
+    public String getDoordashMeal()
+    {
+        for (int i = 0; i < totalOrders.size(); i++)
+        {
+            switch (totalOrders.get(i).getMeal())
+            {
+                case "breakfast":
+                    menu = "breakfast";
+                    break;
+                case "lunch":
+                    menu = "lunch";
+                    break;
+                case "dinner":
+                    menu = "dinner";
+                    break;
+             } //switch statements set the input to the menu parameter for each takeout object
+            }
+        return menu;
+    }   
+    
+    public double totalCostForOrder()
+    {
+        totalcost = 0;
+        for (TakeOut i: totalOrders)
+        {
+            totalcost += i.getDishPrice();
+        } 
+        return totalcost; //calculates total cost of all dishes together
+    }
+    
+    public double[] totalPricesForOrder()
+    {
+        totalcost = 0;
+        prices = new double[getTotalOrderSize()];
+        for (int i = 0; i < getTotalOrderSize(); i++)
+        {
+            prices[i] = totalOrders.get(i).getDishPrice();
+        }
+        return prices; //initialized and populates the ARRAY with individual prices of each dish
+    }
+    
+    public double calculateShippingAndTax()
+    {
+        tax = Math.round(100*(totalcost*.1))/100;
+        shipping = 7.00;
+        return tax+shipping; //calculates and returns tax and shipping together
+    }
+    
+    public double applyCoupon()
+    {
+        if (getsDiscount == true)
+            {
+               finalcost = totalCostForOrder()*.9;
+            }
+        finalcost = Math.round(100*finalcost)/100;
+        return finalcost; //applies coupon to total cost of dishes
+    } 
+    
+    public double getfinalTotal()
+    {
+        finalcost = calculateShippingAndTax()+totalcost;
+        finalcost = Math.round(100*finalcost)/100;
+        return finalcost; //returns total, including shipping/tax/discount
+    }
+    
+    public int getTotalOrderSize()
+    {
+        return totalOrders.size(); //returns size of total order array list
+    }
+    
+    public String makeNewOrder()
+    {
+        System.out.println("Would you like to add another order? ");
+        Scanner input = new Scanner(System.in);
+        String output = "";
+        if (input.equals("yes"))
+        {
+            makeOrder(); //makes another takeout object
+        }
+
+        return output;
+    }
+    
+    public void printTriangle() //prints thank you triangle!!
+    {
+        String input = "ThankYou";
+        String temp = input.substring(1);//take the suffix
+        StringBuilder builder = new StringBuilder(temp);
+        builder = builder.reverse().append(input);//reverse, then append it
+        String line = builder.toString();//this is the last line
+        for(int i = 0; i < input.length(); i++){
+            for(int j = 0; j < line.length(); j++){
+                //print the last line, or those that have distance equals i to the center of the last line
+                if(i + 1 == input.length() || Math.abs(j - line.length()/2) == i){
+                    System.out.print(line.charAt(j)); 
+                }else{
+                    System.out.print(" ");
+                }
+            }
+            System.out.println();
+        }
+    }
+    
+    public String toString()
+    {
+        String output = "";
+        for (int i = 0; i < totalOrders.size(); i++)
+        {
+            output += totalOrders.get(i)+"\n"; //prints all objects in driver
+        }
+        return output;
+    }
+    
+    
+}
