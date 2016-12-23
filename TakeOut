@@ -1,0 +1,96 @@
+import java.time.LocalTime; //to use time
+
+public class TakeOut 
+{
+    private String restaurant; //private instance variables
+    private String menu;
+    private String food;
+    private double price;
+    private boolean isVegetarian;
+    private String size;
+    
+    
+
+    
+    public TakeOut() //zero-arg constructor
+    {
+        this.restaurant = "Crepevine";
+        this.menu = "lunch";
+        this.food = "Pasta";
+        this.price = Math.round(100*((double)(Math.random()*10)+3)/100);
+        this.isVegetarian = false;
+        this.size = "small";
+    }
+    
+    public TakeOut(String restaurant, String menu, String food, double price, boolean isVegetarian, String size)
+    { //multi-arg constructor
+        this.restaurant = restaurant;
+        this.menu = menu;
+        this.food = food;
+        price = Math.round(100*((double)(Math.random()*10)+3)/100);
+        this.price = price;
+        this.isVegetarian = isVegetarian;
+        this.size = size;
+    }
+    
+    public void setRestaurant(String restaurant) // sets restaurant to user input in driver
+    {
+        this.restaurant = restaurant;
+    }
+    
+    public void setVegOrItem(String food) //overloaded methods -- either sets item or sets Vegetarian to true
+    {
+        this.food = food;
+    }
+    
+    public void setVegOrItem(boolean isVegetarian)
+    {
+        this.isVegetarian = isVegetarian;
+    }
+    
+    public String getItem() //gets name of item from user input in driver
+    {
+        return food;
+    }
+    
+    public double getDishPrice() //rounds dish prices and returns price
+    {
+        price = Math.round(100*price)/100;
+        return price;
+    }
+    
+    
+    
+    public boolean makeItVeg() // sets Vegetarian to true
+    {
+        isVegetarian = true;
+        return isVegetarian;
+    }
+   
+    public void setMeal(String menu) //sets menu to what the user entered-- compares it to time to see if they get discount
+    {
+        this.menu = menu;
+    }
+    
+    public String getMeal() //gets the meal of the day that they're ordering from
+    {
+        return menu;
+    }
+    
+    public void setSize(String size) //sets size of meal to user input
+    {
+        this.size = size;
+    }
+    
+    public String toString() //toString() method
+    {
+        String output;
+        output = "";
+        if (isVegetarian == true)
+        {
+            output ="Vegetarian ";
+        }
+        output += food +" from "+restaurant+": $"+price;
+        return output;
+    }
+}
