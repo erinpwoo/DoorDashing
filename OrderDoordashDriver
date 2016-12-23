@@ -1,0 +1,46 @@
+
+import java.util.Scanner;
+public class TakeOutDriver
+{
+    public static void main(String[]args)
+    {
+        boolean stillOrdering = true; //boolean checks to see when user is done ordering or if they want to order more
+        System.out.println("Welcome to Doordash! Feelin hungry?");
+        OrderDoordash neworder = new OrderDoordash(); // new instance of OrderDoordash class
+        neworder.makeOrder(); // begins ordering process
+        do //if user wants to order another item, calls upon makeOrder again
+        {
+            System.out.println("Would you like to order another item?: ");
+            Scanner input = new Scanner(System.in);
+            String input1 = input.nextLine();
+            if (input1.equals("yes"))
+            {
+                neworder.makeOrder();
+            }
+            else
+            {
+               stillOrdering = false;
+            }
+        } while (stillOrdering == true);
+        
+        if (stillOrdering == false) //if user says they're done ordering, the program returns final order details
+        {
+            System.out.println("Total Orders: "+neworder.allOrders());
+            if (neworder.getDiscount() == true)
+            {
+                System.out.println("Because you're ordering a "+neworder.getDoordashMeal()+" during "+neworder.getDoordashMeal()+
+                    " hours, you get a 10% discount!");
+                System.out.println("Discounted total: "+neworder.applyCoupon()+"\n"+" Shipping: $7.00"+"\n"+"Tax: $"+
+                (neworder.calculateShippingAndTax()-7)+"\n"+"Final Total!: $"+neworder.getfinalTotal());     
+            } 
+            else
+            {
+                System.out.println("Order total: $"+neworder.totalCostForOrder()+"\n"+" Shipping: $7.00"+"\n"+"Tax: $"+
+                (neworder.calculateShippingAndTax()-7)+"\n"+"Final Total!: $"+neworder.getfinalTotal());
+                
+                neworder.printTriangle();
+            }
+        }
+    }
+}
+
